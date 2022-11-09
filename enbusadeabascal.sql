@@ -1,14 +1,82 @@
+DROP TABLE IF EXISTS weapons_materials;
+DROP TABLE IF EXISTS armours_materials;
+
 DROP TABLE IF EXISTS materials;
 
-DROPT TBLE IF EXISTS characters_weapons;
+DROP TABLE IF EXISTS characters_weapons;
+DROP TABLE IF EXISTS characters_armours;
+DROP TABLE IF EXISTS characters_items;
+
+DROP TABLE IF EXISTS weapons;
+DROP TABLE IF EXISTS armours;
+DROP TABLE IF EXISTS items;
 
 DROP TABLE IF EXISTS weapons_types;
 DROP TABLE IF EXISTS armours_types;
 DROP TABLE IF EXISTS items_types;
 
-DROP TABLE IF EXISTS weapons;
-DROP TABLE IF EXISTS armours;
-DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS stats;
+
+DROP TABLE IF EXISTS characters;
+
+CREATE TABLE characters (
+  id_character INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(32) NOT NULL,
+  age INT NOT NULL,
+  race VARCHAR(16) NOT NULL,
+  gender CHAR(1) NOT NULL,
+  class VARCHAR(16) NOT NULL,
+  height FLOAT NOT NULL,
+  weight FLOAT NOT NULL,
+  country CHAR(3) NOT NULL,
+  description TEXT
+);
+
+INSERT INTO characters (name, age, race, gender, class, height, weight, country, description) VALUES
+('Payoh', 64, 'Cambiapieles', 'L', 'Dictador', 1.75, 80, 'RUM', 'Payoh es... un cambiapieles.'),
+('Yuca', 27, 'Sirénido', 'F', 'Cryptolai', 0.7, 80, 'PUR', 'Una sirena de puertorrico que trafica con ezereum'),
+('Yulen', 70, 'Nomuerto', 'D', 'Minero', 0.8, 25, 'NDE', ''),
+('Josema', 3000, 'Deidad', 'T', 'Procrastinador', 3.14, 0, 'PER', 'Es una deidad que deja las cosas pa\' después');
+
+
+CREATE TABLE stats (
+  id_stat INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  agility INT NOT NULL,
+  hp FLOAT NOT NULL,
+  hp_max INT NOT NULL,
+  xp FLOAT NOT NULL,
+  xp_max INT NOT NULL,
+  mp FLOAT NOT NULL,
+  mp_max INT NOT NULL,
+  `level` INT NOT NULL,
+  physic_attack FLOAT NOT NULL,
+  magic_attack FLOAT NOT NULL,
+  physic_defense FLOAT NOT NULL,
+  magic_defense FLOAT NOT NULL,
+  stamina INT NOT NULL,
+  mana INT NOT NULL,
+  intel INT NOT NULL,
+  stealth INT NOT NULL,
+  luck INT NOT NULL,
+  faith INT NOT NULL,
+  velocity INT NOT NULL,
+  dexterity INT NOT NULL,
+  strength INT NOT NULL,
+  charisma INT NOT NULL,
+  vigor INT NOT NULL,
+  tenacity INT NOT NULL,
+  critical_rate FLOAT NOT NULL,
+  balance FLOAT NOT NULL,
+  id_character INT UNSIGNED NOT NULL,
+  FOREIGN KEY (id_character) REFERENCES characters(id_character)
+);
+
+INSERT INTO stats (agility, hp, hp_max, xp, xp_max, mp, mp_max, level, physic_attack, magic_attack, physic_defense, magic_defense, stamina, mana, intel, stealth, luck, faith, velocity, dexterity, strength, charisma, vigor, tenacity, critical_rate, balance, id_character) VALUES
+(900, 950, 0, 820, 0, 300, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+(75, 0, 0, 500, 0, 700, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3),
+(1000, 1000, 0, 999, 0, 1000, 0, 69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4),
+(200, 600, 0, 150, 0, 750, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2);
+
 
 CREATE TABLE weapons_types(
     id_weapon_type INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -19,7 +87,9 @@ CREATE TABLE weapons_types(
 
 INSERT INTO weapons_types (type, description, icon)
 VALUES ("Melee", "Cuerpo a cuerpo", "melee.png"),
-       ("Range", "Distancia", "range.png");
+       ("Range", "Distancia", "range.png"),
+       ("Magical", "Magia potagia", "magic.png"),
+       ("Divine", "Es divino", "divine.png");
 
 
 CREATE TABLE weapons (
@@ -30,12 +100,12 @@ CREATE TABLE weapons (
     distance FLOAT,
     quality INT,
     physic_attack FLOAT,
-    physic_defense FLOAT
+    physic_defense FLOAT,
     magic_attack FLOAT,
     magic_defense FLOAT,
     description TEXT,
-    level INT,
-    level_min INT
+    `level` INT,
+    level_min INT,
     id_weapon_type INT UNSIGNED,
     FOREIGN KEY (id_weapon_type) REFERENCES weapons_types (id_weapon_type)
 );
@@ -52,7 +122,7 @@ VALUES	("Brazo de bebé", 1, 100, 0.5,
 	100, 1, 1, 1,
 	1, "Bandera con una estrella :D", 100, 100,
 	1),
-	("Atrape", 1, -1, 1000,
+	("Astrapé", 1, -1, 1000,
 	1000, 1, 1, 1,
 	30, "El rayo de Zeus", 100, 100,
 	2),
@@ -60,12 +130,12 @@ VALUES	("Brazo de bebé", 1, 100, 0.5,
 	100, 1, 1, 1,
 	1, "La mítica espada de YERBA todo el mundo la conoce", 100, 100,
 	1);
-	
-    
+
+
 
 CREATE TABLE armours_types(
     id_armour_type INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    type varchar(24),
+    type VARCHAR(24),
     description TEXT,
     icon VARCHAR(16)
 );
@@ -75,9 +145,36 @@ VALUES ("Peto", "Pa'l pexito", "peto.png"),
 ("Traje", "Pa'l cuerpesito", "traje.png"),
 ("Casco", "Pa' la cabesa", "casco.png");
 
+
+CREATE TABLE armours (
+  id_armour INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  armour VARCHAR(24) NOT NULL,
+  weight FLOAT NOT NULL,
+  class VARCHAR(16) NOT NULL,
+  magic_defense FLOAT NOT NULL,
+  physic_defense FLOAT NOT NULL,
+  durability INT NOT NULL,
+  `level` INT NOT NULL,
+  level_min INT NOT NULL,
+  cost FLOAT NOT NULL,
+  rarity INT NOT NULL,
+  description TEXT,
+  notriety INT NOT NULL,
+  id_armour_type INT UNSIGNED NOT NULL,
+  FOREIGN KEY (id_armour_type) REFERENCES armours_types (id_armour_type)
+);
+    
+INSERT INTO armours (armour, weight, class, magic_defense, physic_defense, durability, level, level_min, cost, rarity, description, notriety, id_armour_type)
+VALUES
+('Túnica de asesino', 0.5, 'Asesino', 100, 300, 400, 50, 30, 1500, 300, 'Túnica perfecta pa\' que no te vean', 1, 2),
+('Kronus de jagged helmet', 30, 'Paladin', 300, 120, -1, 120, 99, -1, 999, 'Casco hecho para dioses', 80, 1);
+
+
+
+
 CREATE TABLE items_types(
     id_item_type INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    type varchar(24),
+    type VARCHAR(24),
     description TEXT,
     icon VARCHAR(16)
 );
@@ -86,6 +183,8 @@ INSERT INTO items_types (type, description, icon)
 VALUES ("Comida", "alimento rico", "food.png"),
 ("Poción", "Te cura o te mata o lo que sea", "pocion.png"),
 ("Tesoro", "$__$", "tesoro.png");
+
+
 
 
 CREATE TABLE materials (
@@ -120,6 +219,10 @@ CREATE TABLE weapons_materials (
     FOREIGN KEY (id_material) REFERENCES materials(id_material)
 );
 
+INSERT INTO weapons_materials (id_weapon, id_material)
+VALUES (1, 3),(1,11),(2, 7),(2, 8),(3,9),(3,10);
+
+
 
 
 CREATE TABLE armours_materials (
@@ -127,7 +230,7 @@ CREATE TABLE armours_materials (
     id_armour INT UNSIGNED,
     id_material INT UNSIGNED,
     FOREIGN KEY (id_armour) REFERENCES armours(id_armour),
-    FOREIGN KEY (id_material) REREFENCES materials(id_material)
+    FOREIGN KEY (id_material) REFERENCES materials(id_material)
 );
 
 
@@ -179,9 +282,25 @@ FOREIGN KEY (id_weapon) REFERENCES weapons(id_weapon)
 
 
 INSERT INTO characters_weapons (id_character, id_weapon)
-VALUES (1, 1), (4, 3), (4, 1)
+VALUES (1, 1), (4, 3), (4, 1);
 
 
+         
+CREATE TABLE characters_armours (
+id_character_armour INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+id_character INT UNSIGNED,
+id_armour INT UNSIGNED,
+FOREIGN KEY (id_character) REFERENCES characters(id_character),
+FOREIGN KEY (id_armour) REFERENCES armours(id_armour)
+);
 
+
+CREATE TABLE characters_items (
+id_character_item INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+id_character INT UNSIGNED,
+id_item INT UNSIGNED,
+FOREIGN KEY (id_character) REFERENCES characters(id_character),
+FOREIGN KEY (id_item) REFERENCES items(id_item)
+);
 
 
